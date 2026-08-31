@@ -91,7 +91,7 @@ export default function ImageUploader({ value, onUploaded, onUploadingChange, er
         >
           {uploading ? `Uploading… ${progress}%` : previewSrc ? 'Replace Image' : 'Choose Image'}
         </button>
-        <span className="text-xs text-ink-faint">JPG, PNG, WEBP or GIF — up to 8MB</span>
+        <span className="text-xs text-ink-faint">JPG, PNG, WEBP or GIF — up to 20MB</span>
       </div>
 
       <input

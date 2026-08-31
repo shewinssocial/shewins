@@ -40,14 +40,14 @@ export default function About() {
           <div className="relative">
             <div className="grid grid-cols-2 gap-4">
               <img
-                src="https://images.unsplash.com/photo-1543269865-cbf427effbad?q=80&w=800&auto=format&fit=crop"
-                alt="Women in conversation at a  Shewins community meetup"
+                src="/women-group-11.jpeg"
+                alt="Women in conversation at a Shewins community meetup"
                 className="rounded-xl2 shadow-card object-cover h-64 w-full mt-8"
                 loading="lazy"
               />
               <img
-                src="https://images.unsplash.com/photo-1531482615713-2afd69097998?q=80&w=800&auto=format&fit=crop"
-                alt="Members of  Shewins collaborating at a roundtable"
+                src="/women-group-14.jpeg"
+                alt="Members of Shewins collaborating at a roundtable"
                 className="rounded-xl2 shadow-card object-cover h-64 w-full"
                 loading="lazy"
               />

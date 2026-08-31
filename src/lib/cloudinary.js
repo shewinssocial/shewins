@@ -3,7 +3,7 @@ import { supabase } from './supabaseClient.js';
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
-const MAX_FILE_SIZE_MB = 8;
+const MAX_FILE_SIZE_MB = 20;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 export function validateImageFile(file) {

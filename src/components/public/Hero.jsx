@@ -78,7 +78,7 @@ export default function Hero() {
               layout the image kept growing taller than the viewport itself. */}
           <div className="relative rounded-xl2 overflow-hidden shadow-soft h-[300px] sm:h-[380px] lg:h-[420px] xl:h-[480px]">
             <img
-              src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?q=80&w=1200&auto=format&fit=crop"
+             src="/women-group-1.jpg"
               alt="Women from the Shewins community gathered together, smiling and connecting"
               className="h-full w-full object-cover"
               loading="eager"
