@@ -81,7 +81,7 @@ export default function Hero() {
              src="/women-group-1.jpg"
               alt="Women from the Shewins community gathered together, smiling and connecting"
               className="h-full w-full object-cover"
-              loading="eager"
+       
             />
           </div>
           <div className="absolute -bottom-6 -left-6 bg-white rounded-xl2 shadow-soft px-5 py-4 max-w-[220px] hidden sm:block">
