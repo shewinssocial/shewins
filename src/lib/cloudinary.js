@@ -3,9 +3,9 @@ import { supabase } from './supabaseClient.js';
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
-const MAX_FILE_SIZE_MB = 20;
+const MAX_FILE_SIZE_MB = 50;
 const CLOUDINARY_MAX_FILE_SIZE = 10 * 1024 * 1024;
-const TARGET_UPLOAD_SIZE = 9.5 * 1024 * 1024;
+const TARGET_UPLOAD_SIZE = 8.5 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 export function validateImageFile(file) {
@@ -31,13 +31,19 @@ async function compressImageForUpload(file) {
     image.src = objectUrl;
     await image.decode();
 
-    const scale = Math.min(1, Math.sqrt(TARGET_UPLOAD_SIZE / file.size));
     const canvas = document.createElement('canvas');
-    canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
-    canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
-    canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+    let scale = Math.min(1, Math.sqrt(TARGET_UPLOAD_SIZE / file.size));
+    let blob = null;
 
-    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', 0.82));
+    for (let attempt = 0; attempt < 4; attempt += 1) {
+      canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+      canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+      canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+      blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', 0.78));
+      if (blob && blob.size <= TARGET_UPLOAD_SIZE) break;
+      scale *= 0.75;
+    }
+
     if (!blob || blob.size > CLOUDINARY_MAX_FILE_SIZE) {
       throw new Error('This image could not be compressed below the 10MB upload limit. Please choose a smaller image.');
     }
