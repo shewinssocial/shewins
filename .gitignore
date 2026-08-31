@@ -5,3 +5,6 @@ dist
 .env
 .env.local
 .vercel
+
+Add-Content .gitignore "*.MP4"
+Add-Content .gitignore "*.mp4"
