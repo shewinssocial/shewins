@@ -1,6 +1,7 @@
 import React from 'react';
 import { SectionHeading, StitchDivider } from '../ui/Primitives.jsx';
 import useReveal from '../../hooks/useReveal.js';
+import { publicImageLoading } from '../../lib/imageUrl.js';
 
 const HIGHLIGHTS = [
   { title: 'Community', text: 'A circle of women who show up for one another.' },
@@ -43,13 +44,13 @@ export default function About() {
                 src="/women-group-11.jpeg"
                 alt="Women in conversation at a Shewins community meetup"
                 className="rounded-xl2 shadow-card object-cover h-64 w-full mt-8"
-                loading="lazy"
+                loading={publicImageLoading}
               />
               <img
                 src="/women-group-14.jpeg"
                 alt="Members of Shewins collaborating at a roundtable"
                 className="rounded-xl2 shadow-card object-cover h-64 w-full"
-                loading="lazy"
+                loading={publicImageLoading}
               />
             </div>
             <div className="absolute -top-6 right-1/3 bg-rose-600 text-white rounded-xl2 px-5 py-4 shadow-soft hidden sm:block">

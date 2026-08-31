@@ -18,7 +18,7 @@ export default function ContactSection() {
   }, []);
 
   return (
-    <section  >
+    <section id="contact">
       <div >
            
           

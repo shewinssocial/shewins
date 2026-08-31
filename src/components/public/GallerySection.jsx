@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { listGallery } from '../../data/api.js';
 import { SectionHeading, EmptyState } from '../ui/Primitives.jsx';
 import useReveal from '../../hooks/useReveal.js';
+import { getOptimizedImageUrl, publicImageLoading } from '../../lib/imageUrl.js';
 
 export default function GallerySection() {
   const [items, setItems] = useState([]);
@@ -75,9 +76,9 @@ export default function GallerySection() {
                 className="group relative block w-full break-inside-avoid rounded-xl2 overflow-hidden shadow-card focus-ring"
               >
                 <img
-                  src={item.image}
+                  src={getOptimizedImageUrl(item.image, 1000)}
                   alt={item.title}
-                  loading="lazy"
+                  loading={publicImageLoading}
                   className="w-full object-cover group-hover:scale-105 transition-transform duration-500"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-ink/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
@@ -110,7 +111,7 @@ export default function GallerySection() {
           </button>
           <div className="max-w-3xl w-full" onClick={(e) => e.stopPropagation()}>
             <img
-              src={lightbox.image}
+              src={getOptimizedImageUrl(lightbox.image, 1600)}
               alt={lightbox.title}
               className="w-full max-h-[75vh] object-contain rounded-xl2"
             />

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Eyebrow } from '../ui/Primitives.jsx';
+import { getOptimizedImageUrl } from '../../lib/imageUrl.js';
 
 export default function Hero() {
   return (
@@ -78,10 +79,11 @@ export default function Hero() {
               layout the image kept growing taller than the viewport itself. */}
           <div className="relative rounded-xl2 overflow-hidden shadow-soft h-[300px] sm:h-[380px] lg:h-[420px] xl:h-[480px]">
             <img
-             src="/women-group-1.jpg"
+              src={getOptimizedImageUrl('/women-group-1.jpg', 1200)}
               alt="Women from the Shewins community gathered together, smiling and connecting"
               className="h-full w-full object-cover"
-       
+              loading="eager"
+              fetchPriority="high"
             />
           </div>
           <div className="absolute -bottom-6 -left-6 bg-white rounded-xl2 shadow-soft px-5 py-4 max-w-[220px] hidden sm:block">

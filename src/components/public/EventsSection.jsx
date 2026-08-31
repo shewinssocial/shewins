@@ -4,6 +4,7 @@ import { SectionHeading, CardSkeleton, EmptyState } from '../ui/Primitives.jsx';
 import EventCard from './EventCard.jsx';
 import EventModal from './EventModal.jsx';
 import useReveal from '../../hooks/useReveal.js';
+import { getOptimizedImageUrl, publicImageLoading } from '../../lib/imageUrl.js';
 
 // Draft events are never fetched by the public site (see listPublicEvents /
 // RLS policy "Public can read published events") — this only needs to
@@ -114,9 +115,9 @@ function MomentsFallback({ images, videos }) {
               {images.map((img) => (
                 <div key={img.id} className="rounded-xl2 overflow-hidden shadow-card aspect-square">
                   <img
-                    src={img.image}
+                    src={getOptimizedImageUrl(img.image, 800)}
                     alt={img.title}
-                    loading="lazy"
+                    loading={publicImageLoading}
                     className="h-full w-full object-cover hover:scale-105 transition-transform duration-500"
                   />
                 </div>

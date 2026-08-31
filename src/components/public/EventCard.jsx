@@ -1,4 +1,5 @@
 import React from 'react';
+import { getOptimizedImageUrl, publicImageLoading } from '../../lib/imageUrl.js';
 
 function formatDate(dateStr) {
   const d = new Date(`${dateStr}T00:00:00`);
@@ -14,9 +15,9 @@ export default function EventCard({ event, onOpen }) {
     >
       <div className="relative h-48 overflow-hidden bg-cream-200">
         <img
-          src={event.image}
+          src={getOptimizedImageUrl(event.image, 1000)}
           alt={event.title}
-          loading="lazy"
+          loading={publicImageLoading}
           className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
         <span className="absolute top-3 left-3 bg-white/95 rounded-lg px-3 py-1.5 text-center leading-none shadow-sm">

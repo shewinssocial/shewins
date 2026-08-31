@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Button } from '../ui/Primitives.jsx';
+import { getOptimizedImageUrl } from '../../lib/imageUrl.js';
 
 export default function EventModal({ event, onClose }) {
   useEffect(() => {
@@ -36,7 +37,7 @@ export default function EventModal({ event, onClose }) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="relative h-64 sm:h-72 bg-cream-200">
-          <img src={event.image} alt={event.title} className="h-full w-full object-cover" />
+          <img src={getOptimizedImageUrl(event.image, 1400)} alt={event.title} className="h-full w-full object-cover" />
           <button
             onClick={onClose}
             aria-label="Close event details"
