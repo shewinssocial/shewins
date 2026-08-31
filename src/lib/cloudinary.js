@@ -4,6 +4,8 @@ const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
 const MAX_FILE_SIZE_MB = 20;
+const CLOUDINARY_MAX_FILE_SIZE = 10 * 1024 * 1024;
+const TARGET_UPLOAD_SIZE = 9.5 * 1024 * 1024;
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 export function validateImageFile(file) {
@@ -15,6 +17,35 @@ export function validateImageFile(file) {
     return `Image must be smaller than ${MAX_FILE_SIZE_MB}MB.`;
   }
   return null;
+}
+
+async function compressImageForUpload(file) {
+  if (file.size <= CLOUDINARY_MAX_FILE_SIZE) return file;
+  if (file.type === 'image/gif') {
+    throw new Error('GIF images larger than 10MB cannot be compressed automatically. Please choose a smaller GIF.');
+  }
+
+  const objectUrl = URL.createObjectURL(file);
+  try {
+    const image = new Image();
+    image.src = objectUrl;
+    await image.decode();
+
+    const scale = Math.min(1, Math.sqrt(TARGET_UPLOAD_SIZE / file.size));
+    const canvas = document.createElement('canvas');
+    canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+    canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+    canvas.getContext('2d').drawImage(image, 0, 0, canvas.width, canvas.height);
+
+    const blob = await new Promise((resolve) => canvas.toBlob(resolve, 'image/webp', 0.82));
+    if (!blob || blob.size > CLOUDINARY_MAX_FILE_SIZE) {
+      throw new Error('This image could not be compressed below the 10MB upload limit. Please choose a smaller image.');
+    }
+
+    return new File([blob], `${file.name.replace(/\.[^.]+$/, '')}.webp`, { type: 'image/webp' });
+  } finally {
+    URL.revokeObjectURL(objectUrl);
+  }
 }
 
 /**
@@ -41,51 +72,55 @@ export function uploadImageToCloudinary(file, { folder = 'shewings', onProgress 
       return;
     }
 
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', UPLOAD_PRESET);
-    formData.append('folder', folder);
+    compressImageForUpload(file)
+      .then((uploadFile) => {
+        const formData = new FormData();
+        formData.append('file', uploadFile);
+        formData.append('upload_preset', UPLOAD_PRESET);
+        formData.append('folder', folder);
 
-    const xhr = new XMLHttpRequest();
-    xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`);
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`);
 
-    xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable && onProgress) {
-        onProgress(Math.round((e.loaded / e.total) * 100));
-      }
-    };
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable && onProgress) {
+            onProgress(Math.round((e.loaded / e.total) * 100));
+          }
+        };
 
-    xhr.onload = () => {
-      try {
-        const data = JSON.parse(xhr.responseText);
-        if (xhr.status >= 200 && xhr.status < 300) {
-          resolve({
-            url: data.secure_url,
-            publicId: data.public_id,
-            width: data.width,
-            height: data.height,
-          });
-        } else {
-          const cloudinaryMessage = data?.error?.message || data?.error?.description || '';
-          const presetMessage =
-            cloudinaryMessage.toLowerCase().includes('upload preset') ||
-            cloudinaryMessage.toLowerCase().includes('preset');
+        xhr.onload = () => {
+          try {
+            const data = JSON.parse(xhr.responseText);
+            if (xhr.status >= 200 && xhr.status < 300) {
+              resolve({
+                url: data.secure_url,
+                publicId: data.public_id,
+                width: data.width,
+                height: data.height,
+              });
+            } else {
+              const cloudinaryMessage = data?.error?.message || data?.error?.description || '';
+              const presetMessage =
+                cloudinaryMessage.toLowerCase().includes('upload preset') ||
+                cloudinaryMessage.toLowerCase().includes('preset');
 
-          reject(
-            new Error(
-              xhr.status === 400 && presetMessage
-                ? 'Cloudinary upload preset is invalid or not set to Unsigned. Open Cloudinary → Settings → Upload → Upload presets and create a valid unsigned preset, then update VITE_CLOUDINARY_UPLOAD_PRESET in .env.local.'
-                : cloudinaryMessage || 'Image upload failed. Please try again.'
-            )
-          );
-        }
-      } catch {
-        reject(new Error('Image upload failed. Please try again.'));
-      }
-    };
+              reject(
+                new Error(
+                  xhr.status === 400 && presetMessage
+                    ? 'Cloudinary upload preset is invalid or not set to Unsigned. Open Cloudinary → Settings → Upload → Upload presets and create a valid unsigned preset, then update VITE_CLOUDINARY_UPLOAD_PRESET in .env.local.'
+                    : cloudinaryMessage || 'Image upload failed. Please try again.'
+                )
+              );
+            }
+          } catch {
+            reject(new Error('Image upload failed. Please try again.'));
+          }
+        };
 
-    xhr.onerror = () => reject(new Error('Image upload failed — check your connection and try again.'));
-    xhr.send(formData);
+        xhr.onerror = () => reject(new Error('Image upload failed — check your connection and try again.'));
+        xhr.send(formData);
+      })
+      .catch(reject);
   });
 }
 
