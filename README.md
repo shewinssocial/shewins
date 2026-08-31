@@ -44,7 +44,7 @@ events, gallery images, videos, and enquiries — backed by Supabase
 2. Create an **unsigned upload preset** scoped to this project: Settings →
    Upload → Upload presets → Add upload preset →
    - Signing Mode: **Unsigned**
-   - Folder: `shewings` (optional but recommended, keeps uploads tidy)
+   - Folder: `shewins` (optional but recommended, keeps uploads tidy)
 3. Deploy the Cloudinary-deletion Edge Function so the admin can delete
    images without ever exposing your Cloudinary API secret to the browser:
 
