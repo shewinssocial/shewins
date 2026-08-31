@@ -23,27 +23,7 @@ export default function ContactSection() {
            
           
 
-          <div className="flex flex-col gap-4 relative">
-            {settings ? (
-              <>
-                {settings.email && (
-                  <ContactRow label="Email" value={settings.email} href={`mailto:${settings.email}`} />
-                )}
-                {settings.phone && <ContactRow label="Phone" value={settings.phone} href={`tel:${settings.phone}`} />}
-                {settings.location && <ContactRow label="Location" value={settings.location} />}
-                {(settings.instagram || settings.linkedin || settings.facebook) && (
-                  <div className="flex gap-3 pt-2">
-                    {settings.instagram && <SocialLink href={settings.instagram} label="Instagram" />}
-                    {settings.linkedin && <SocialLink href={settings.linkedin} label="LinkedIn" />}
-                    {settings.facebook && <SocialLink href={settings.facebook} label="Facebook" />}
-                  </div>
-                )}
-                
-              </>
-            ) : (
-              <div   />
-            )}
-          </div>
+           
         
       </div>
     </section>

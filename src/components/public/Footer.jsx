@@ -54,9 +54,9 @@ export default function Footer() {
           <p className="text-xs uppercase tracking-wide text-cream-100/50 mb-4">Connect</p>
           {settings && (settings.email || settings.phone || settings.location) && (
             <ul className="flex flex-col gap-2 text-sm text-cream-100/80">
-              {settings.email && <li>{settings.email}</li>}
-              {settings.phone && <li>{settings.phone}</li>}
-              {settings.location && <li>{settings.location}</li>}
+              {settings.email && <li> shewinssocial@gmail.com</li>}
+              {settings.phone && <li> +91 8925550575</li>}
+              {settings.location && <li>Hosur, Tamil Nadu, India</li>}
             </ul>
           )}
         </div>

@@ -58,7 +58,7 @@ export default function AdminLogin() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className={inputClass()}
-              placeholder="admin@shewings.com"
+              placeholder="aspire@gmail.com"
               autoFocus
             />
           </FormField>

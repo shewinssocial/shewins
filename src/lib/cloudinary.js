@@ -35,7 +35,7 @@ export function uploadImageToCloudinary(file, { folder = 'shewings', onProgress 
     if (!CLOUD_NAME || !UPLOAD_PRESET) {
       reject(
         new Error(
-          'Image upload is not configured. Set VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET.'
+          'Image upload is not configured. Set VITE_CLOUDINARY_CLOUD_NAME and VITE_CLOUDINARY_UPLOAD_PRESET in .env.local, then restart the app.'
         )
       );
       return;
@@ -66,7 +66,18 @@ export function uploadImageToCloudinary(file, { folder = 'shewings', onProgress 
             height: data.height,
           });
         } else {
-          reject(new Error(data?.error?.message || 'Image upload failed. Please try again.'));
+          const cloudinaryMessage = data?.error?.message || data?.error?.description || '';
+          const presetMessage =
+            cloudinaryMessage.toLowerCase().includes('upload preset') ||
+            cloudinaryMessage.toLowerCase().includes('preset');
+
+          reject(
+            new Error(
+              xhr.status === 400 && presetMessage
+                ? 'Cloudinary upload preset is invalid or not set to Unsigned. Open Cloudinary → Settings → Upload → Upload presets and create a valid unsigned preset, then update VITE_CLOUDINARY_UPLOAD_PRESET in .env.local.'
+                : cloudinaryMessage || 'Image upload failed. Please try again.'
+            )
+          );
         }
       } catch {
         reject(new Error('Image upload failed. Please try again.'));
