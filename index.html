@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/shweinslogo.jpeg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Shewins — Empowering Women. Connecting Communities.</title>
+    <meta
+      name="description"
+      content="Shewins brings women together from different professions, businesses, and backgrounds — a community built on connection, empowerment, and opportunity."
+    />
+    <meta name="theme-color" content="#F3EFE6" />
+
+    <!--
+      Initial loading splash — pure CSS/inline SVG, no Tailwind classes.
+      This has to render before the app's stylesheet has necessarily
+      loaded, so it can't depend on the compiled Tailwind CSS — every
+      color here is hand-matched to the brand tokens in tailwind.config.js
+      (cream #F3EFE6, rose-600 #8C4B56, rose-200 #E9BEC2, ink-soft #5E4E47).
+      App.jsx removes it once the real app has mounted.
+    -->
+    <style>
+      #app-loader {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        background: white;
+        transition: opacity 0.5s ease;
+      }
+      #app-loader.app-loader-hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .app-loader-badge {
+        position: relative;
+        width: 90px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .app-loader-ring {
+        position: absolute;
+        inset: 0;
+        animation: app-loader-spin 2.4s linear infinite;
+      }
+      .app-loader-logo {
+        width: 116px;
+        height: 116px;
+        object-fit: contain;
+      }
+      .app-loader-word {
+        margin: 0;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 13px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: #5e4e47;
+      }
+      .app-loader-hint {
+        margin: 4px 0 0;
+        max-width: 260px;
+        text-align: center;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 12px;
+        line-height: 1.5;
+        color: #8a796f;
+      }
+      @keyframes app-loader-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .app-loader-ring {
+          animation: none;
+        }
+      }
+    </style>
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Shewins — Empowering Women. Connecting Communities." />
+    <meta
+      property="og:description"
+      content="A community platform bringing women together from different professions, businesses, and backgrounds."
+    />
+    <meta property="og:image" content="/og-image.jpg" />
+
+    <!--
+      Structured data (JSON-LD) — schema.org Organization.
+      TODO: replace https://your-domain.com with your real deployed domain.
+      email/telephone/sameAs are left out here on purpose: they live in the
+      admin-editable site_settings table and would go stale if hardcoded.
+      Once there's an admin UI for site_settings, this can be enriched at
+      runtime from the same data the Contact section already renders —
+      say the word and I'll wire that up.
+    -->
+    <script type="application/ld+json" id="organization-schema">
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Shewins",
+        "url": "https://your-domain.com/",
+        "description": "Shewins brings women together from different professions, businesses, and backgrounds — a community built on connection, empowerment, and opportunity.",
+        "logo": "https://your-domain.com/favicon.svg"
+      }
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,500&family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-cream text-ink font-body antialiased">
+    <script>
+      window.__appLoaderStart = Date.now();
+      // Failsafe: if the real app hasn't taken over and removed this splash
+      // within a few seconds, something failed before React could even
+      // mount (most commonly a missing/invalid environment variable
+      // throwing during module load). Surface that instead of spinning
+      // forever with no clue what's wrong.
+      setTimeout(function () {
+        var loader = document.getElementById('app-loader');
+        if (!loader) return; // already removed — app mounted fine
+        var hint = document.createElement('p');
+        hint.className = 'app-loader-hint';
+        hint.textContent =
+          'Still loading — open the browser console (F12) for the error, or check your .env setup.';
+        loader.appendChild(hint);
+      }, 6000);
+    </script>
+    <div id="app-loader" aria-hidden="true">
+      <div class="app-loader-badge">
+        <svg class="app-loader-ring" viewBox="0 0 72 72" width="94" height="96">
+          <circle
+            cx="36"
+            cy="36"
+            r="39"
+            fill="none"
+            stroke="#e9bec2"
+            stroke-width="2"
+            stroke-dasharray="2 8"
+            stroke-linecap="round"
+          />
+        </svg>
+        <img src="/sl2.png" alt="Shewins" class="app-loader-logo" />
+      </div>
+     
+    </div>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>

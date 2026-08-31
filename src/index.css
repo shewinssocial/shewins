@@ -1,0 +1,81 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+::selection {
+  background-color: #E9BEC2;
+  color: #3A2E29;
+}
+
+/* Signature motif: a stitched thread — used as section dividers and accents,
+   a nod to "Shewings" as a place where women's stories are woven together. */
+.stitch-line {
+  height: 1px;
+  background-image: repeating-linear-gradient(
+    to right,
+    #C97B84 0,
+    #C97B84 6px,
+    transparent 6px,
+    transparent 14px
+  );
+}
+
+.stitch-line-v {
+  width: 1px;
+  background-image: repeating-linear-gradient(
+    to bottom,
+    #C97B84 0,
+    #C97B84 6px,
+    transparent 6px,
+    transparent 14px
+  );
+}
+
+.focus-ring:focus-visible {
+  outline: 2px solid #8C4B56;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Scroll reveal */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Line clamp helpers */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
