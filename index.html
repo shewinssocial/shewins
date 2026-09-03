@@ -21,6 +21,9 @@
       App.jsx removes it once the real app has mounted.
     -->
     <style>
+      html.shewins-instant #app-loader {
+        display: none !important;
+      }
       #app-loader {
         position: fixed;
         inset: 0;
@@ -29,57 +32,134 @@
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        gap: 14px;
-        background: white;
-        transition: opacity 0.5s ease;
+        background: radial-gradient(ellipse at center, #fcfbf8 0%, #f3efe6 100%);
+        transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+        will-change: opacity, transform;
       }
       #app-loader.app-loader-hidden {
         opacity: 0;
+        transform: scale(1.03);
         pointer-events: none;
       }
-      .app-loader-badge {
+      .app-loader-inner {
         position: relative;
-        width: 90px;
-        height: 90px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 16px;
+      }
+      .app-loader-aura {
+        position: absolute;
+        width: 190px;
+        height: 190px;
+        border-radius: 9999px;
+        background: radial-gradient(circle, rgba(233, 190, 194, 0.5) 0%, rgba(201, 123, 132, 0.1) 60%, transparent 75%);
+        filter: blur(20px);
+        animation: loaderAuraPulse 2.8s ease-in-out infinite;
+        pointer-events: none;
+      }
+      .app-loader-logo-wrap {
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
-      }
-      .app-loader-ring {
-        position: absolute;
-        inset: 0;
-        animation: app-loader-spin 2.4s linear infinite;
+        animation: brandLogoReveal 1.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        will-change: transform, opacity, filter;
       }
       .app-loader-logo {
-        width: 116px;
-        height: 116px;
+        width: 120px;
+        height: 120px;
         object-fit: contain;
+        filter: drop-shadow(0 6px 16px rgba(58, 46, 41, 0.08));
       }
-      .app-loader-word {
+      .app-loader-text-wrap {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        animation: brandTextReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
+        opacity: 0;
+        will-change: transform, opacity;
+      }
+      .app-loader-title {
         margin: 0;
-        font-family: Georgia, 'Times New Roman', serif;
-        font-size: 13px;
-        letter-spacing: 0.14em;
+        font-family: 'Fraunces', Georgia, serif;
+        font-size: 14px;
+        font-weight: 600;
+        letter-spacing: 0.22em;
         text-transform: uppercase;
-        color: #5e4e47;
+        color: #3a2e29;
+      }
+      .app-loader-sub {
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        font-size: 10.5px;
+        font-weight: 500;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: #8c4b56;
       }
       .app-loader-hint {
-        margin: 4px 0 0;
-        max-width: 260px;
+        margin: 12px 0 0;
+        max-width: 280px;
         text-align: center;
-        font-family: Georgia, 'Times New Roman', serif;
-        font-size: 12px;
+        font-family: 'Inter', sans-serif;
+        font-size: 11px;
         line-height: 1.5;
         color: #8a796f;
       }
-      @keyframes app-loader-spin {
-        to {
-          transform: rotate(360deg);
+      @keyframes brandLogoReveal {
+        0% {
+          transform: scale(0.82) translateY(8px);
+          opacity: 0;
+          filter: blur(9px);
+        }
+        35% {
+          opacity: 1;
+          filter: blur(2px);
+        }
+        70% {
+          transform: scale(1.0) translateY(0);
+          filter: blur(0px);
+        }
+        100% {
+          transform: scale(1.035) translateY(-1px);
+          opacity: 1;
+          filter: blur(0px);
+        }
+      }
+      @keyframes brandTextReveal {
+        0% {
+          opacity: 0;
+          transform: translateY(6px);
+        }
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes loaderAuraPulse {
+        0%, 100% {
+          transform: scale(0.9);
+          opacity: 0.45;
+        }
+        50% {
+          transform: scale(1.15);
+          opacity: 0.8;
         }
       }
       @media (prefers-reduced-motion: reduce) {
-        .app-loader-ring {
-          animation: none;
+        #app-loader {
+          transition: none !important;
+        }
+        .app-loader-logo-wrap,
+        .app-loader-text-wrap,
+        .app-loader-aura {
+          animation: none !important;
+          opacity: 1 !important;
+          transform: none !important;
+          filter: none !important;
         }
       }
     </style>
@@ -122,39 +202,38 @@
   </head>
   <body class="bg-cream text-ink font-body antialiased">
     <script>
+      (function() {
+        try {
+          if (sessionStorage.getItem('shewins_loaded') === 'true') {
+            document.documentElement.classList.add('shewins-instant');
+          }
+        } catch (e) {}
+      })();
       window.__appLoaderStart = Date.now();
       // Failsafe: if the real app hasn't taken over and removed this splash
-      // within a few seconds, something failed before React could even
-      // mount (most commonly a missing/invalid environment variable
-      // throwing during module load). Surface that instead of spinning
-      // forever with no clue what's wrong.
+      // within a few seconds, surface a helpful hint.
       setTimeout(function () {
         var loader = document.getElementById('app-loader');
-        if (!loader) return; // already removed — app mounted fine
+        if (!loader) return;
         var hint = document.createElement('p');
         hint.className = 'app-loader-hint';
         hint.textContent =
           'Still loading — open the browser console (F12) for the error, or check your .env setup.';
-        loader.appendChild(hint);
+        var inner = loader.querySelector('.app-loader-inner') || loader;
+        inner.appendChild(hint);
       }, 6000);
     </script>
     <div id="app-loader" aria-hidden="true">
-      <div class="app-loader-badge">
-        <svg class="app-loader-ring" viewBox="0 0 72 72" width="94" height="96">
-          <circle
-            cx="36"
-            cy="36"
-            r="39"
-            fill="none"
-            stroke="#e9bec2"
-            stroke-width="2"
-            stroke-dasharray="2 8"
-            stroke-linecap="round"
-          />
-        </svg>
-        <img src="/sl2.png" alt="Shewins" class="app-loader-logo" />
+      <div class="app-loader-inner">
+        <div class="app-loader-aura"></div>
+        <div class="app-loader-logo-wrap">
+          <img src="/sl2.png" alt="Shewins" class="app-loader-logo" />
+        </div>
+        <div class="app-loader-text-wrap">
+          <p class="app-loader-title">SheWins</p>
+          <p class="app-loader-sub">Women Forum</p>
+        </div>
       </div>
-     
     </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>

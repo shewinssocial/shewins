@@ -1,4 +1,5 @@
 import React from 'react';
+import WordReveal from './WordReveal.jsx';
 
 export function StitchDivider({ className = '' }) {
   return <div className={`stitch-line w-full ${className}`} aria-hidden="true" />;
@@ -13,14 +14,23 @@ export function Eyebrow({ children }) {
   );
 }
 
-export function SectionHeading({ eyebrow, title, description, align = 'left' }) {
+export function SectionHeading({ eyebrow, title, description, align = 'left', wordReveal = true }) {
   const alignment = align === 'center' ? 'text-center items-center mx-auto' : 'text-left items-start';
   return (
     <div className={`flex flex-col gap-4 max-w-2xl ${alignment}`}>
       {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-      <h2 className="font-display text-3xl sm:text-4xl md:text-[2.75rem] leading-[1.1] text-ink font-semibold">
-        {title}
-      </h2>
+      {wordReveal ? (
+        <WordReveal
+          as="h2"
+          className="font-display text-3xl sm:text-4xl md:text-[2.75rem] leading-[1.1] text-ink font-semibold"
+        >
+          {title}
+        </WordReveal>
+      ) : (
+        <h2 className="font-display text-3xl sm:text-4xl md:text-[2.75rem] leading-[1.1] text-ink font-semibold">
+          {title}
+        </h2>
+      )}
       {description && <p className="text-ink-soft text-base sm:text-lg leading-relaxed">{description}</p>}
     </div>
   );
@@ -40,12 +50,14 @@ export function Badge({ children, tone = 'pink' }) {
 
 export function Button({ as: Comp = 'button', variant = 'primary', className = '', children, ...props }) {
   const base =
-    'inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 focus-ring';
+    'btn-premium inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 focus-ring cursor-pointer';
   const variants = {
-    primary: 'bg-pink-600 text-white hover:bg-pink-700 shadow-soft hover:-translate-y-0.5',
-    secondary: 'bg-white text-ink border border-ink/10 hover:border-pink-400 hover:text-pink-600',
-    ghost: 'bg-transparent text-ink hover:text-pink-600',
-    outlineLight: 'bg-white/10 text-white border border-white/40 hover:bg-white/20 backdrop-blur',
+    primary:
+      'bg-pink-600 text-white hover:bg-pink-700 shadow-soft hover:shadow-[0_10px_28px_-6px_rgba(219,39,119,0.35)]',
+    secondary:
+      'bg-white text-ink border border-ink/10 hover:border-pink-300 hover:text-pink-600 hover:bg-rose-50/40 shadow-sm hover:shadow-card',
+    ghost: 'bg-transparent text-ink hover:text-pink-600 hover:bg-pink-50/50',
+    outlineLight: 'bg-white/10 text-white border border-white/40 hover:bg-white/20 backdrop-blur shadow-sm',
   };
   return (
     <Comp className={`${base} ${variants[variant]} ${className}`} {...props}>

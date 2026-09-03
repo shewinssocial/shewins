@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { listPublicEvents, listGallery, listVideos, extractYouTubeId } from '../../data/api.js';
-import { SectionHeading, CardSkeleton, EmptyState } from '../ui/Primitives.jsx';
+import { listPublicEvents } from '../../data/api.js';
+import { SectionHeading, CardSkeleton } from '../ui/Primitives.jsx';
 import EventCard from './EventCard.jsx';
 import EventModal from './EventModal.jsx';
 import useReveal from '../../hooks/useReveal.js';
-import { getOptimizedImageUrl, publicImageLoading } from '../../lib/imageUrl.js';
 
-// Draft events are never fetched by the public site (see listPublicEvents /
-// RLS policy "Public can read published events") — this only needs to
-// filter published events down to ones that haven't passed yet.
 function isUpcoming(event) {
+  if (!event || !event.date) return false;
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   return new Date(`${event.date}T00:00:00`) >= today;
@@ -18,37 +15,31 @@ function isUpcoming(event) {
 export default function EventsSection() {
   const [loading, setLoading] = useState(true);
   const [upcoming, setUpcoming] = useState([]);
-  const [moments, setMoments] = useState({ images: [], videos: [] });
   const [active, setActive] = useState(null);
-  const [error, setError] = useState('');
-  const ref = useReveal();
+  const ref = useReveal({ variant: 'fade-up' });
 
   useEffect(() => {
     let mounted = true;
-    async function load() {
-      try {
-        const events = await listPublicEvents();
-        const upcomingEvents = events.filter(isUpcoming);
+    listPublicEvents()
+      .then((events) => {
         if (!mounted) return;
-
-        if (upcomingEvents.length > 0) {
-          setUpcoming(upcomingEvents);
-        } else {
-          const [images, videos] = await Promise.all([listGallery(), listVideos()]);
-          if (!mounted) return;
-          setMoments({ images: images.slice(0, 4), videos: videos.slice(0, 2) });
-        }
-      } catch {
-        if (mounted) setError('We couldn\u2019t load events right now. Please refresh and try again.');
-      } finally {
+        setUpcoming((events || []).filter(isUpcoming));
+      })
+      .catch(() => {
+        if (mounted) setUpcoming([]);
+      })
+      .finally(() => {
         if (mounted) setLoading(false);
-      }
-    }
-    load();
+      });
     return () => {
       mounted = false;
     };
   }, []);
+
+  // If there are no upcoming events posted by the admin, do not render the section at all
+  if (!loading && upcoming.length === 0) {
+    return null;
+  }
 
   return (
     <section id="events" className="py-16 sm:py-24">
@@ -62,85 +53,25 @@ export default function EventsSection() {
               ))}
             </div>
           </>
-        ) : error ? (
-          <EmptyState title="No upcoming events" description={error} />
-        ) : upcoming.length > 0 ? (
+        ) : (
           <>
             <SectionHeading
               eyebrow="Upcoming Events"
               title="Join us at what's coming next."
               description="Programs, workshops, and meetups happening across the Shewins community."
               align="center"
+              wordReveal={true}
             />
-            <div ref={ref} className="reveal grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
+            <div ref={ref} className="reveal-fade-up grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
               {upcoming.map((event) => (
                 <EventCard key={event.id} event={event} onOpen={setActive} />
               ))}
             </div>
           </>
-        ) : (
-          <MomentsFallback images={moments.images} videos={moments.videos} />
         )}
       </div>
 
       {active && <EventModal event={active} onClose={() => setActive(null)} />}
     </section>
-  );
-}
-
-function MomentsFallback({ images, videos }) {
-  const ref = useReveal();
-  const hasContent = images.length > 0 || videos.length > 0;
-
-  return (
-    <div ref={ref} className="reveal">
-      <SectionHeading
-        eyebrow="Moments from Shewins"
-        title="While we're preparing for our next event, take a look back."
-        description="Explore some moments from our community — photos and videos from the gatherings that came before."
-        align="center"
-      />
-
-      {!hasContent ? (
-        <div className="mt-14">
-          <EmptyState
-            title="New events are on the way"
-            description="We're planning our next gathering — check back soon or join to be the first to hear."
-          />
-        </div>
-      ) : (
-        <div className="mt-14 grid md:grid-cols-2 gap-8">
-          {images.length > 0 && (
-            <div className="grid grid-cols-2 gap-4">
-              {images.map((img) => (
-                <div key={img.id} className="rounded-xl2 overflow-hidden shadow-card aspect-square">
-                  <img
-                    src={getOptimizedImageUrl(img.image, 800)}
-                    alt={img.title}
-                    loading={publicImageLoading}
-                    className="h-full w-full object-cover hover:scale-105 transition-transform duration-500"
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-          {videos.length > 0 && (
-            <div className="flex flex-col gap-4">
-              {videos.map((v) => (
-                <div key={v.id} className="rounded-xl2 overflow-hidden shadow-card aspect-video">
-                  <iframe
-                    className="h-full w-full"
-                    src={`https://www.youtube.com/embed/${extractYouTubeId(v.youtubeUrl)}`}
-                    title={v.title}
-                    loading="lazy"
-                    allowFullScreen
-                  />
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
   );
 }

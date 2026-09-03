@@ -64,7 +64,7 @@
 
 
 import React, { useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, useLocation } from 'react-router-dom';
 import Home from './pages/Home.jsx';
 import NotFound from './pages/NotFound.jsx';
 import AdminLogin from './pages/admin/AdminLogin.jsx';
@@ -75,30 +75,49 @@ import VideosManager from './pages/admin/VideosManager.jsx';
 import EnquiriesManager from './pages/admin/EnquiriesManager.jsx';
 import ProtectedRoute from './components/admin/ProtectedRoute.jsx';
 
-// Minimum time the splash in index.html stays visible, so a fast load
-// doesn't just flash it for a frame — but it never waits longer than the
-// app actually took to mount. See the #app-loader markup in index.html.
-const MIN_SPLASH_MS = 500;
+// Premium brand reveal duration on first visit — allows the logo to scale
+// gracefully (small -> normal -> slight pop) and blur-to-sharp before lifting.
+// On subsequent page transitions or returns, sessionStorage skips this completely.
+const BRAND_REVEAL_MS = 1100;
 
 export default function App() {
+  const location = useLocation();
+
   useEffect(() => {
     const loader = document.getElementById('app-loader');
     if (!loader) return undefined;
 
+    // If previously viewed in this browser session, dismiss immediately without wait
+    if (sessionStorage.getItem('shewins_loaded') === 'true') {
+      loader.remove();
+      return undefined;
+    }
+
     const startedAt = window.__appLoaderStart || Date.now();
-    const remaining = Math.max(MIN_SPLASH_MS - (Date.now() - startedAt), 0);
+    const remaining = Math.max(BRAND_REVEAL_MS - (Date.now() - startedAt), 0);
 
     const hideTimer = setTimeout(() => {
       loader.classList.add('app-loader-hidden');
+      try {
+        sessionStorage.setItem('shewins_loaded', 'true');
+      } catch (e) {}
+
       loader.addEventListener('transitionend', () => loader.remove(), { once: true });
-      // Fallback in case transitionend doesn't fire (e.g. reduced-motion).
-      setTimeout(() => loader.remove(), 600);
+      setTimeout(() => loader.remove(), 700);
     }, remaining);
-    
+
     return () => clearTimeout(hideTimer);
   }, []);
 
+  // Handle route change scroll position
+  useEffect(() => {
+    if (!location.hash) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [location.pathname]);
+
   return (
+    <div className="motion-page-container transition-opacity duration-300">
     <Routes>
       <Route path="/" element={<Home />} />
 
@@ -146,5 +165,6 @@ export default function App() {
 
       <Route path="*" element={<NotFound />} />
     </Routes>
+    </div>
   );
 }

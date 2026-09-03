@@ -38,28 +38,40 @@ const ITEMS = [
 ];
 
 export default function WhatWeDo() {
-  const ref = useReveal();
+  const gridRef = useReveal({ variant: 'fade-up', staggerChildren: true });
+
   return (
-    <section id="what-we-do" className="py-16 sm:py-24 bg-white/60">
+    <section id="what-we-do" className="py-16 sm:py-24 bg-white/60 relative overflow-hidden">
       <div className="max-w-6xl mx-auto px-6 sm:px-8">
         <SectionHeading
           eyebrow="What We Do"
           title="SheWins empowers women entrepreneurs to connect, grow, and win together."
           align="center"
+          wordReveal={true}
         />
-        <div ref={ref} className="reveal grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
+        <div ref={gridRef} className="reveal-fade-up grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
           {ITEMS.map((item, i) => (
             <div
               key={item.title}
-              className="group rounded-xl2 bg-white p-7 shadow-card hover:shadow-soft hover:-translate-y-1.5 transition-all duration-300 border border-transparent hover:border-rose-100"
-              style={{ transitionDelay: `${i * 40}ms` }}
+              className={`group rounded-xl2 bg-white p-7 shadow-card hover:shadow-soft hover:-translate-y-2 hover:scale-[1.01] transition-all duration-300 border border-transparent hover:border-pink-200/80 stagger-${(i % 3) + 1}`}
             >
-              <div className="h-12 w-12 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 group-hover:bg-pink-600 group-hover:text-white transition-colors duration-300">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
+              <div className="h-12 w-12 rounded-full bg-pink-100 flex items-center justify-center text-pink-600 group-hover:bg-pink-600 group-hover:text-white group-hover:scale-110 transition-all duration-300">
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.7"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
                   {item.icon}
                 </svg>
               </div>
-              <h3 className="font-display text-xl font-semibold text-ink mt-5">{item.title}</h3>
+              <h3 className="font-display text-xl font-semibold text-ink mt-5 group-hover:text-pink-600 transition-colors duration-200">
+                {item.title}
+              </h3>
               <p className="text-ink-faint text-sm leading-relaxed mt-2">{item.text}</p>
             </div>
           ))}

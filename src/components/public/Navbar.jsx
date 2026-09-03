@@ -18,7 +18,7 @@ export default function Navbar() {
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
-    window.addEventListener('scroll', onScroll);
+    window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
@@ -38,25 +38,40 @@ export default function Navbar() {
   }, []);
 
   return (
-    <header className="fixed top-0 inset-x-0 z-50 flex justify-center px-4 pt-4">
+    <header className="fixed top-0 inset-x-0 z-50 flex justify-center px-4 pt-4 transition-all duration-300">
       <nav
-        className={`w-full max-w-6xl rounded-full transition-all duration-300 ${
-          scrolled ? 'bg-white/85 backdrop-blur-md shadow-soft' : 'bg-white/40 backdrop-blur-sm'
+        className={`w-full max-w-6xl rounded-full transition-all duration-400 ${
+          scrolled
+            ? 'bg-white/90 backdrop-blur-md shadow-soft border border-white/40'
+            : 'bg-white/40 backdrop-blur-sm border border-transparent'
         }`}
       >
         <div className="flex items-center justify-between px-5 sm:px-6 py-3">
-         <a href="#home" className="flex items-center gap-2 font-display text-ink">
-           <img src="/shweinslogo.png" width="32" height="32" alt="Shewins" />
-           <span className="flex flex-col leading-none">
-             <span className="text-lg font-semibold">SheWins</span>
-             <span className="text-[10px] font-medium tracking-[0.12em]  text-ink-soft">Women Forum</span>
-           </span>
-         </a>
+          <a href="#home" className="group flex items-center gap-2 font-display text-ink focus-ring rounded-lg">
+            <img
+              src="/shweinslogo.png"
+              width="32"
+              height="32"
+              alt="Shewins"
+              className="group-hover:scale-105 transition-transform duration-300 ease-out"
+            />
+            <span className="flex flex-col leading-none">
+              <span className="text-lg font-semibold group-hover:text-rose-600 transition-colors duration-300">
+                SheWins
+              </span>
+              <span className="text-[10px] font-medium tracking-[0.12em] text-ink-soft">
+                Women Forum
+              </span>
+            </span>
+          </a>
 
           <ul className="hidden lg:flex items-center gap-7 text-sm font-medium text-ink-soft">
             {LINKS.map((link) => (
               <li key={link.href}>
-                <a href={link.href} className="hover:text-rose-600 transition-colors focus-ring rounded">
+                <a
+                  href={link.href}
+                  className="nav-link-premium py-1 hover:text-rose-600 transition-colors focus-ring rounded"
+                >
                   {link.label}
                 </a>
               </li>
@@ -70,7 +85,7 @@ export default function Navbar() {
           </div>
 
           <button
-            className="lg:hidden h-10 w-10 flex items-center justify-center rounded-full text-ink focus-ring"
+            className="lg:hidden h-10 w-10 flex items-center justify-center rounded-full text-ink focus-ring cursor-pointer hover:bg-white/40 transition-colors"
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
             aria-controls="mobile-menu"
@@ -92,32 +107,21 @@ export default function Navbar() {
       {open && (
         <>
           <div
-            className="fixed inset-0 z-40 bg-ink/25 backdrop-blur-[1px] lg:hidden"
+            className="fixed inset-0 z-40 bg-ink/30 backdrop-blur-sm lg:hidden transition-opacity duration-300"
             onClick={() => setOpen(false)}
             aria-hidden="true"
           />
           <div
             id="mobile-menu"
-            className="fixed top-[84px] inset-x-4 z-50 lg:hidden rounded-xl2 bg-white/85 backdrop-blur-xl border border-white/60 shadow-soft overflow-hidden animate-fadeUp"
+            className="fixed top-[84px] inset-x-4 z-50 lg:hidden rounded-xl2 bg-white/95 backdrop-blur-xl border border-white/70 shadow-soft overflow-hidden animate-fadeUp"
           >
             <div className="relative px-6 pt-6 pb-7">
-              {/* <svg
-                className="absolute -top-6 -right-10 opacity-40 pointer-events-none"
-                width="160"
-                height="160"
-                viewBox="0 0 160 160"
-                fill="none"
-                aria-hidden="true"
-              >
-                <circle cx="80" cy="80" r="78" stroke="#E9BEC2" strokeWidth="1.5" strokeDasharray="1 10" />
-              </svg> */}
-
               <ul className="flex flex-col gap-0.5 text-base font-display relative">
                 {LINKS.map((link, i) => (
                   <li
                     key={link.href}
                     className="animate-fadeUp"
-                    style={{ animationDelay: `${i * 15}ms`, animationFillMode: 'both' }}
+                    style={{ animationDelay: `${i * 20}ms`, animationFillMode: 'both' }}
                   >
                     <a
                       href={link.href}
@@ -125,7 +129,15 @@ export default function Navbar() {
                       className="flex items-center justify-between py-3.5 text-ink hover:text-rose-600 transition-colors border-b border-ink/[0.06] focus-ring rounded"
                     >
                       {link.label}
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-40">
+                      <svg
+                        width="14"
+                        height="14"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        className="opacity-40"
+                      >
                         <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
                       </svg>
                     </a>
