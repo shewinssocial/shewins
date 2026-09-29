@@ -1,77 +1,45 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
+import { useScroll, useTransform, useSpring, useReducedMotion } from 'framer-motion';
 
 /**
- * Applies a smooth scroll-driven parallax translation to an element.
- * @param {Object} options
- * @param {number} options.speed - Speed multiplier (negative moves opposite to scroll, positive moves with scroll)
- * @param {number} options.min - Lower bound offset in pixels
- * @param {number} options.max - Upper bound offset in pixels
- * @param {boolean} options.disabledOnMobile - Whether to disable on screens < 768px
+ * Section-scoped smooth parallax hook using Framer Motion.
+ * Calculates scroll progress relative to the target section container (`target: ref`).
+ * Returns a smoothed `y` motion value wrapped in `useSpring` for a lagged-follow feel.
+ *
+ * @param {Object} [options]
+ * @param {number} [options.speed=1.0] - Relative speed (1.0 = normal page rate, 0.85 = slower/depth)
+ * @param {number} [options.distance=60] - Base travel range
+ * @param {React.RefObject} [options.targetRef] - Section container ref (or created automatically)
+ * @param {Object} [options.springConfig] - Framer Motion spring config
+ * @returns {{ ref: React.RefObject, y: import('framer-motion').MotionValue<number> }}
  */
 export default function useParallax({
-  speed = 0.1,
-  min = -120,
-  max = 120,
-  disabledOnMobile = true,
+  speed = 1.0,
+  distance = 60,
+  targetRef,
+  springConfig = { stiffness: 90, damping: 26, mass: 0.8, restDelta: 0.001 },
 } = {}) {
-  const ref = useRef(null);
+  const localRef = useRef(null);
+  const containerRef = targetRef || localRef;
+  const prefersReducedMotion = useReducedMotion();
 
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return undefined;
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ['start end', 'end start'],
+  });
 
-    // Check prefers-reduced-motion
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReducedMotion) return undefined;
+  // Relative speed difference translates to travel:
+  // Speed < 1.0 moves slower than page scroll (creates background depth)
+  // Speed > 1.0 moves faster than page scroll (creates foreground drift)
+  const delta = (1 - speed) * distance * 2.5;
 
-    let ticking = false;
-    let frameId = null;
+  const rawY = useTransform(
+    scrollYProgress,
+    [0, 1],
+    prefersReducedMotion ? [0, 0] : [-delta, delta]
+  );
 
-    function updateParallax() {
-      if (!el) return;
+  const y = useSpring(rawY, springConfig);
 
-      if (disabledOnMobile && window.innerWidth < 768) {
-        el.style.transform = '';
-        return;
-      }
-
-      const rect = el.getBoundingClientRect();
-      const viewportHeight = window.innerHeight;
-
-      // Only calculate if the element is near or within the viewport
-      if (rect.bottom >= -200 && rect.top <= viewportHeight + 200) {
-        const centerY = rect.top + rect.height / 2;
-        const viewportCenter = viewportHeight / 2;
-        const delta = centerY - viewportCenter;
-
-        const offset = Math.max(min, Math.min(max, delta * speed));
-        el.style.transform = `translate3d(0, ${offset.toFixed(2)}px, 0)`;
-        el.style.willChange = 'transform';
-      }
-      ticking = false;
-    }
-
-    function onScroll() {
-      if (!ticking) {
-        frameId = requestAnimationFrame(updateParallax);
-        ticking = true;
-      }
-    }
-
-    updateParallax();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      if (frameId) cancelAnimationFrame(frameId);
-      if (el) {
-        el.style.transform = '';
-        el.style.willChange = '';
-      }
-    };
-  }, [speed, min, max, disabledOnMobile]);
-
-  return ref;
+  return { ref: containerRef, y };
 }

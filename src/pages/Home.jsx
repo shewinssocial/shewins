@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from '../components/public/Navbar.jsx';
 import Hero from '../components/public/Hero.jsx';
+import StorySection from '../components/public/StorySection.jsx';
 import About from '../components/public/About.jsx';
 import WhatWeDo from '../components/public/WhatWeDo.jsx';
 import EventsSection from '../components/public/EventsSection.jsx';
@@ -17,6 +18,7 @@ export default function Home() {
       <Navbar />
       <main>
         <Hero />
+        <StorySection />
         <About />
         <WhatWeDo />
         <EventsSection />

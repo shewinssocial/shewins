@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { listPublicEvents } from '../../data/api.js';
 import { SectionHeading, CardSkeleton } from '../ui/Primitives.jsx';
 import EventCard from './EventCard.jsx';
 import EventModal from './EventModal.jsx';
-import useReveal from '../../hooks/useReveal.js';
 
 function isUpcoming(event) {
   if (!event || !event.date) return false;
@@ -16,7 +16,6 @@ export default function EventsSection() {
   const [loading, setLoading] = useState(true);
   const [upcoming, setUpcoming] = useState([]);
   const [active, setActive] = useState(null);
-  const ref = useReveal({ variant: 'fade-up' });
 
   useEffect(() => {
     let mounted = true;
@@ -60,13 +59,18 @@ export default function EventsSection() {
               title="Join us at what's coming next."
               description="Programs, workshops, and meetups happening across the Shewins community."
               align="center"
-              wordReveal={true}
             />
-            <div ref={ref} className="reveal-fade-up grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: '-30px' }}
+              transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+              className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-14"
+            >
               {upcoming.map((event) => (
                 <EventCard key={event.id} event={event} onOpen={setActive} />
               ))}
-            </div>
+            </motion.div>
           </>
         )}
       </div>

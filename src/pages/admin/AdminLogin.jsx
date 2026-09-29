@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext.jsx';
 import { FormField, inputClass } from '../../components/admin/FormField.jsx';
 
@@ -41,7 +42,13 @@ export default function AdminLogin() {
         Back to Home
       </a>
 
-      <div className="w-full max-w-sm">
+      <motion.div
+        initial={{ opacity: 0, y: 14, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.98 }}
+        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-sm"
+      >
         <div className="flex flex-col items-center gap-2 mb-8">
           <span className="h-12 w-12 rounded-full bg-rose-600 flex items-center justify-center text-white font-display text-xl">
             S
@@ -84,7 +91,7 @@ export default function AdminLogin() {
           </button>
 
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 }

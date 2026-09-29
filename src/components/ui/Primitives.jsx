@@ -1,5 +1,5 @@
 import React from 'react';
-import WordReveal from './WordReveal.jsx';
+import { motion } from 'framer-motion';
 
 export function StitchDivider({ className = '' }) {
   return <div className={`stitch-line w-full ${className}`} aria-hidden="true" />;
@@ -14,25 +14,22 @@ export function Eyebrow({ children }) {
   );
 }
 
-export function SectionHeading({ eyebrow, title, description, align = 'left', wordReveal = true }) {
+export function SectionHeading({ eyebrow, title, description, align = 'left', className = '' }) {
   const alignment = align === 'center' ? 'text-center items-center mx-auto' : 'text-left items-start';
   return (
-    <div className={`flex flex-col gap-4 max-w-2xl ${alignment}`}>
+    <motion.div
+      initial={{ opacity: 0, y: 18, filter: 'blur(6px)' }}
+      whileInView={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+      viewport={{ once: true, margin: '-40px' }}
+      transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+      className={`flex flex-col gap-4 max-w-2xl ${alignment} ${className}`}
+    >
       {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-      {wordReveal ? (
-        <WordReveal
-          as="h2"
-          className="font-display text-3xl sm:text-4xl md:text-[2.75rem] leading-[1.1] text-ink font-semibold"
-        >
-          {title}
-        </WordReveal>
-      ) : (
-        <h2 className="font-display text-3xl sm:text-4xl md:text-[2.75rem] leading-[1.1] text-ink font-semibold">
-          {title}
-        </h2>
-      )}
+      <h2 className="font-display text-3xl sm:text-4xl md:text-[2.75rem] leading-[1.1] text-ink font-semibold">
+        {title}
+      </h2>
       {description && <p className="text-ink-soft text-base sm:text-lg leading-relaxed">{description}</p>}
-    </div>
+    </motion.div>
   );
 }
 
@@ -49,8 +46,9 @@ export function Badge({ children, tone = 'pink' }) {
 }
 
 export function Button({ as: Comp = 'button', variant = 'primary', className = '', children, ...props }) {
+  const MotionTag = typeof Comp === 'string' && motion[Comp] ? motion[Comp] : motion.button;
   const base =
-    'btn-premium inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-all duration-300 focus-ring cursor-pointer';
+    'btn-premium inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-semibold transition-colors duration-200 focus-ring cursor-pointer select-none';
   const variants = {
     primary:
       'bg-pink-600 text-white hover:bg-pink-700 shadow-soft hover:shadow-[0_10px_28px_-6px_rgba(219,39,119,0.35)]',
@@ -60,9 +58,15 @@ export function Button({ as: Comp = 'button', variant = 'primary', className = '
     outlineLight: 'bg-white/10 text-white border border-white/40 hover:bg-white/20 backdrop-blur shadow-sm',
   };
   return (
-    <Comp className={`${base} ${variants[variant]} ${className}`} {...props}>
+    <MotionTag
+      whileHover={{ y: -2, scale: 1.01 }}
+      whileTap={{ y: 0, scale: 0.99 }}
+      transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+      className={`${base} ${variants[variant]} ${className}`}
+      {...props}
+    >
       {children}
-    </Comp>
+    </MotionTag>
   );
 }
 

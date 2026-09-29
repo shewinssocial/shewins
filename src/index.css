@@ -2,8 +2,46 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  scroll-behavior: smooth;
+/* Radial gradient utility (Tailwind doesn't include this by default) */
+.bg-gradient-radial {
+  background-image: radial-gradient(var(--tw-gradient-stops));
+}
+
+/* Hero scroll line animation */
+.scroll-line-inner {
+  height: 0%;
+  animation: scrollLineDrop 1.6s ease-in-out infinite;
+  animation-delay: 0.3s;
+}
+
+@keyframes scrollLineDrop {
+  0% { height: 0%; opacity: 1; transform: translateY(0); }
+  60% { height: 100%; opacity: 1; transform: translateY(0); }
+  100% { height: 100%; opacity: 0; transform: translateY(100%); }
+}
+
+/* Hero CTA button micro-interaction reset for touch */
+@media (hover: none) {
+  .hero-cta-btn {
+    transform: none !important;
+  }
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 body {
@@ -45,6 +83,11 @@ body {
 }
 
 :root {
+  --background: 40 33% 97%;
+  --foreground: 20 20% 20%;
+  --border: 30 15% 85%;
+  --muted: 35 20% 92%;
+  --muted-foreground: 25 10% 48%;
   --ease-editorial: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -202,3 +245,5 @@ body {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+@layer base {}

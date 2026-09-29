@@ -1,5 +1,6 @@
 import React from 'react';
-import { getOptimizedImageUrl, publicImageLoading } from '../../lib/imageUrl.js';
+import { motion } from 'framer-motion';
+import { getOptimizedImageUrl } from '../../lib/imageUrl.js';
 
 function formatDate(dateStr) {
   const d = new Date(`${dateStr}T00:00:00`);
@@ -9,15 +10,23 @@ function formatDate(dateStr) {
 
 export default function EventCard({ event, onOpen }) {
   return (
-    <button
+    <motion.button
       onClick={() => onOpen(event)}
-      className="group text-left rounded-xl2 bg-white shadow-card hover:shadow-soft hover:-translate-y-2 hover:scale-[1.01] transition-all duration-300 overflow-hidden focus-ring flex flex-col border border-transparent hover:border-pink-200/70 cursor-pointer"
+      whileHover={{ y: -4, scale: 1.01 }}
+      whileTap={{ scale: 0.99 }}
+      transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+      className="group text-left rounded-xl2 bg-white shadow-card hover:shadow-soft overflow-hidden focus-ring flex flex-col border border-transparent hover:border-pink-200/70 cursor-pointer"
     >
       <div className="relative h-48 overflow-hidden bg-cream-200">
         <img
-          src={getOptimizedImageUrl(event.image, 1000)}
+          src={getOptimizedImageUrl(event.image, 1000) || event.image}
+          onError={(e) => {
+            if (event.image && e.currentTarget.src !== event.image) {
+              e.currentTarget.src = event.image;
+            }
+          }}
           alt={event.title}
-          loading={publicImageLoading}
+          loading="eager"
           className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
         />
         <span className="absolute top-3 left-3 bg-white/95 backdrop-blur-sm rounded-lg px-3 py-1.5 text-center leading-none shadow-sm">
@@ -49,7 +58,7 @@ export default function EventCard({ event, onOpen }) {
           </span>
         </span>
       </div>
-    </button>
+    </motion.button>
   );
 }
 

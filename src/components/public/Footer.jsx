@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { getSettings } from '../../data/api.js';
 
 const NAV = [
@@ -7,7 +8,7 @@ const NAV = [
   { label: 'Gallery', href: '#gallery' },
   { label: 'Join Us', href: '#join' },
   { label: 'Contact', href: '#contact' },
-    { label: 'admin', href: 'admin' },
+  { label: 'admin', href: 'admin' },
 ];
 
 export default function Footer() {
@@ -25,17 +26,23 @@ export default function Footer() {
 
   return (
     <footer className="bg-ink text-cream-100">
-      <div className="max-w-6xl mx-auto px-6 sm:px-8 py-14 grid sm:grid-cols-3 gap-10">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-20px' }}
+        transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
+        className="max-w-6xl mx-auto px-6 sm:px-8 py-14 grid sm:grid-cols-3 gap-10"
+      >
         <div className="flex flex-col gap-3">
-           <a href="#home" className="flex items-center gap-2 font-display text-xl font-semibold ">
-             <img src="/sl2.png" width="202" height="102" alt="Shewins"   />
-            {/* Shewins */}
+          <a href="#home" className="flex items-center gap-2 font-display text-xl font-semibold">
+            <img src="/sl2.png" width="202" height="102" alt="Shewins" />
           </a>
           <p className="text-sm text-cream-100/70 leading-relaxed max-w-xs">
             A community bringing women together from different professions, businesses, and
             backgrounds — to connect, grow, and rise together.
           </p>
         </div>
+
 
         <div>
           <p className="text-xs uppercase tracking-wide text-cream-100/50 mb-4">Quick Links</p>
@@ -60,7 +67,7 @@ export default function Footer() {
             </ul>
           )}
         </div>
-      </div>
+      </motion.div>
       <div className="border-t border-white/10 py-5 text-center text-xs text-cream-100/50">
         © {new Date().getFullYear()} Shewins. All rights reserved.
       </div>

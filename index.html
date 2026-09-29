@@ -2,106 +2,68 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/shweinslogo.png" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <title>Shewins — Empowering Women. Connecting Communities.</title>
+    <title>SheWins — Women Forum</title>
     <meta
       name="description"
-      content="Shewins brings women together from different professions, businesses, and backgrounds — a community built on connection, empowerment, and opportunity."
+      content="A vibrant, welcoming community empowering women through networking, events, skill development, and genuine connection."
     />
-    <meta name="theme-color" content="#F3EFE6" />
+    <meta property="og:title" content="SeaWINS — Women Forum" />
+    <meta
+      property="og:description"
+      content="A community built by women, for women. Connecting across professions and cities."
+    />
+    <meta property="og:type" content="website" />
 
     <!--
-      Initial loading splash — pure CSS/inline SVG, no Tailwind classes.
-      This has to render before the app's stylesheet has necessarily
-      loaded, so it can't depend on the compiled Tailwind CSS — every
-      color here is hand-matched to the brand tokens in tailwind.config.js
-      (cream #F3EFE6, rose-600 #8C4B56, rose-200 #E9BEC2, ink-soft #5E4E47).
-      App.jsx removes it once the real app has mounted.
+      Cinematic SeaWINS Logo Intro
+      - Clean full-screen brand background
+      - Tiny SeaWINS logo emerges smoothly (18% -> 100%)
+      - Subtle blur-to-sharp focus
+      - Signature breathing scale (1.0 -> 1.035 -> 1.0)
+      - Graceful veil lift into homepage
     -->
     <style>
+      html.seawins-instant #app-loader,
       html.shewins-instant #app-loader {
         display: none !important;
       }
+
       #app-loader {
         position: fixed;
         inset: 0;
-        z-index: 9999;
+        z-index: 99999;
         display: flex;
-        flex-direction: column;
         align-items: center;
         justify-content: center;
-        background: radial-gradient(ellipse at center, #fcfbf8 0%, #f3efe6 100%);
-        transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
-        will-change: opacity, transform;
-      }
-      #app-loader.app-loader-hidden {
-        opacity: 0;
-        transform: scale(1.03);
+        background: #fbf8f2;
+        background: radial-gradient(ellipse at center, #fdfbf8 0%, #f4efe6 100%);
         pointer-events: none;
       }
-      .app-loader-inner {
-        position: relative;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 16px;
-      }
-      .app-loader-aura {
-        position: absolute;
-        width: 190px;
-        height: 190px;
-        border-radius: 9999px;
-        background: radial-gradient(circle, rgba(233, 190, 194, 0.5) 0%, rgba(201, 123, 132, 0.1) 60%, transparent 75%);
-        filter: blur(20px);
-        animation: loaderAuraPulse 2.8s ease-in-out infinite;
-        pointer-events: none;
-      }
-      .app-loader-logo-wrap {
+
+      .cinematic-logo-wrap {
         position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
-        animation: brandLogoReveal 1.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        will-change: transform, opacity, filter;
       }
-      .app-loader-logo {
-        width: 120px;
-        height: 120px;
+
+      .cinematic-logo {
+        width: 140px;
+        height: 140px;
+        max-width: 80vw;
+        max-height: 80vh;
         object-fit: contain;
-        filter: drop-shadow(0 6px 16px rgba(58, 46, 41, 0.08));
+        display: block;
+        opacity: 0.25;
+        transform: scale(0.2);
       }
-      .app-loader-text-wrap {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
-        animation: brandTextReveal 0.9s cubic-bezier(0.16, 1, 0.3, 1) 0.25s forwards;
-        opacity: 0;
-        will-change: transform, opacity;
-      }
-      .app-loader-title {
-        margin: 0;
-        font-family: 'Fraunces', Georgia, serif;
-        font-size: 14px;
-        font-weight: 600;
-        letter-spacing: 0.22em;
-        text-transform: uppercase;
-        color: #3a2e29;
-      }
-      .app-loader-sub {
-        margin: 0;
-        font-family: 'Inter', sans-serif;
-        font-size: 10.5px;
-        font-weight: 500;
-        letter-spacing: 0.18em;
-        text-transform: uppercase;
-        color: #8c4b56;
-      }
+
       .app-loader-hint {
-        margin: 12px 0 0;
+        position: absolute;
+        bottom: 24px;
+        margin: 0;
         max-width: 280px;
         text-align: center;
         font-family: 'Inter', sans-serif;
@@ -109,89 +71,7 @@
         line-height: 1.5;
         color: #8a796f;
       }
-      @keyframes brandLogoReveal {
-        0% {
-          transform: scale(0.82) translateY(8px);
-          opacity: 0;
-          filter: blur(9px);
-        }
-        35% {
-          opacity: 1;
-          filter: blur(2px);
-        }
-        70% {
-          transform: scale(1.0) translateY(0);
-          filter: blur(0px);
-        }
-        100% {
-          transform: scale(1.035) translateY(-1px);
-          opacity: 1;
-          filter: blur(0px);
-        }
-      }
-      @keyframes brandTextReveal {
-        0% {
-          opacity: 0;
-          transform: translateY(6px);
-        }
-        100% {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      @keyframes loaderAuraPulse {
-        0%, 100% {
-          transform: scale(0.9);
-          opacity: 0.45;
-        }
-        50% {
-          transform: scale(1.15);
-          opacity: 0.8;
-        }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        #app-loader {
-          transition: none !important;
-        }
-        .app-loader-logo-wrap,
-        .app-loader-text-wrap,
-        .app-loader-aura {
-          animation: none !important;
-          opacity: 1 !important;
-          transform: none !important;
-          filter: none !important;
-        }
-      }
     </style>
-
-    <!-- Open Graph -->
-    <meta property="og:type" content="website" />
-    <meta property="og:title" content="Shewins — Empowering Women. Connecting Communities." />
-    <meta
-      property="og:description"
-      content="A community platform bringing women together from different professions, businesses, and backgrounds."
-    />
-    <meta property="og:image" content="/og-image.jpg" />
-
-    <!--
-      Structured data (JSON-LD) — schema.org Organization.
-      TODO: replace https://your-domain.com with your real deployed domain.
-      email/telephone/sameAs are left out here on purpose: they live in the
-      admin-editable site_settings table and would go stale if hardcoded.
-      Once there's an admin UI for site_settings, this can be enriched at
-      runtime from the same data the Contact section already renders —
-      say the word and I'll wire that up.
-    -->
-    <script type="application/ld+json" id="organization-schema">
-      {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Shewins",
-        "url": "https://your-domain.com/",
-        "description": "Shewins brings women together from different professions, businesses, and backgrounds — a community built on connection, empowerment, and opportunity.",
-        "logo": "https://your-domain.com/favicon.svg"
-      }
-    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -204,14 +84,16 @@
     <script>
       (function() {
         try {
-          if (sessionStorage.getItem('shewins_loaded') === 'true') {
-            document.documentElement.classList.add('shewins-instant');
+          if (
+            sessionStorage.getItem('seawins_intro_seen') === '1' ||
+            sessionStorage.getItem('shewings-intro-seen') === '1' ||
+            sessionStorage.getItem('shewins_loaded') === 'true'
+          ) {
+            document.documentElement.classList.add('seawins-instant', 'shewins-instant');
           }
         } catch (e) {}
       })();
       window.__appLoaderStart = Date.now();
-      // Failsafe: if the real app hasn't taken over and removed this splash
-      // within a few seconds, surface a helpful hint.
       setTimeout(function () {
         var loader = document.getElementById('app-loader');
         if (!loader) return;
@@ -219,20 +101,12 @@
         hint.className = 'app-loader-hint';
         hint.textContent =
           'Still loading — open the browser console (F12) for the error, or check your .env setup.';
-        var inner = loader.querySelector('.app-loader-inner') || loader;
-        inner.appendChild(hint);
+        loader.appendChild(hint);
       }, 6000);
     </script>
     <div id="app-loader" aria-hidden="true">
-      <div class="app-loader-inner">
-        <div class="app-loader-aura"></div>
-        <div class="app-loader-logo-wrap">
-          <img src="/sl2.png" alt="Shewins" class="app-loader-logo" />
-        </div>
-        <div class="app-loader-text-wrap">
-          <p class="app-loader-title">SheWins</p>
-          <p class="app-loader-sub">Women Forum</p>
-        </div>
+      <div class="cinematic-logo-wrap">
+        <img src="/sl2.png" alt="SeaWINS" class="cinematic-logo" />
       </div>
     </div>
     <div id="root"></div>

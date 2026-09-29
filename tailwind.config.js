@@ -1,9 +1,16 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./index.html', './src/**/*.{js,jsx}'],
+  content: ['./index.html', './src/**/*.{js,jsx,ts,tsx}'],
   theme: {
     extend: {
       colors: {
+        border: 'hsl(var(--border, 30 15% 85%))',
+        background: 'hsl(var(--background, 40 33% 96%))',
+        foreground: 'hsl(var(--foreground, 20 20% 20%))',
+        muted: {
+          DEFAULT: 'hsl(var(--muted, 35 20% 92%))',
+          foreground: 'hsl(var(--muted-foreground, 25 10% 48%))',
+        },
         cream: {
           DEFAULT: '#F3EFE6',
           50: '#FCFBF8',

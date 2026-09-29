@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../ui/Primitives.jsx';
 
 const LINKS = [
@@ -47,22 +48,18 @@ export default function Navbar() {
         }`}
       >
         <div className="flex items-center justify-between px-5 sm:px-6 py-3">
-          <a href="#home" className="group flex items-center gap-2 font-display text-ink focus-ring rounded-lg">
+          <a
+            href="#home"
+            id="navbar-logo"
+            className="group flex items-center focus-ring rounded-lg py-1 transition-transform duration-300"
+          >
             <img
-              src="/shweinslogo.png"
-              width="32"
-              height="32"
-              alt="Shewins"
-              className="group-hover:scale-105 transition-transform duration-300 ease-out"
+              id="navbar-logo-img"
+              src="/sl2.png"
+              alt="SheWins — Women Forum"
+              className="h-8 sm:h-9 w-auto object-contain group-hover:scale-105 transition-transform duration-300 ease-out"
+              style={{ aspectRatio: '1878 / 829' }}
             />
-            <span className="flex flex-col leading-none">
-              <span className="text-lg font-semibold group-hover:text-rose-600 transition-colors duration-300">
-                SheWins
-              </span>
-              <span className="text-[10px] font-medium tracking-[0.12em] text-ink-soft">
-                Women Forum
-              </span>
-            </span>
           </a>
 
           <ul className="hidden lg:flex items-center gap-7 text-sm font-medium text-ink-soft">
@@ -104,60 +101,66 @@ export default function Navbar() {
         </div>
       </nav>
 
-      {open && (
-        <>
-          <div
-            className="fixed inset-0 z-40 bg-ink/30 backdrop-blur-sm lg:hidden transition-opacity duration-300"
-            onClick={() => setOpen(false)}
-            aria-hidden="true"
-          />
-          <div
-            id="mobile-menu"
-            className="fixed top-[84px] inset-x-4 z-50 lg:hidden rounded-xl2 bg-white/95 backdrop-blur-xl border border-white/70 shadow-soft overflow-hidden animate-fadeUp"
-          >
-            <div className="relative px-6 pt-6 pb-7">
-              <ul className="flex flex-col gap-0.5 text-base font-display relative">
-                {LINKS.map((link, i) => (
-                  <li
-                    key={link.href}
-                    className="animate-fadeUp"
-                    style={{ animationDelay: `${i * 20}ms`, animationFillMode: 'both' }}
-                  >
-                    <a
-                      href={link.href}
-                      onClick={() => setOpen(false)}
-                      className="flex items-center justify-between py-3.5 text-ink hover:text-rose-600 transition-colors border-b border-ink/[0.06] focus-ring rounded"
-                    >
-                      {link.label}
-                      <svg
-                        width="14"
-                        height="14"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        className="opacity-40"
+      <AnimatePresence>
+        {open && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="fixed inset-0 z-40 bg-ink/30 backdrop-blur-sm lg:hidden"
+              onClick={() => setOpen(false)}
+              aria-hidden="true"
+            />
+            <motion.div
+              id="mobile-menu"
+              initial={{ opacity: 0, y: -12, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -12, scale: 0.98 }}
+              transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
+              className="fixed top-[84px] inset-x-4 z-50 lg:hidden rounded-xl2 bg-white/95 backdrop-blur-xl border border-white/70 shadow-soft overflow-hidden"
+            >
+              <div className="relative px-6 pt-6 pb-7">
+                <ul className="flex flex-col gap-0.5 text-base font-display relative">
+                  {LINKS.map((link) => (
+                    <li key={link.href}>
+                      <a
+                        href={link.href}
+                        onClick={() => setOpen(false)}
+                        className="flex items-center justify-between py-3.5 text-ink hover:text-rose-600 transition-colors border-b border-ink/[0.06] focus-ring rounded"
                       >
-                        <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                    </a>
-                  </li>
-                ))}
-              </ul>
+                        {link.label}
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          className="opacity-40"
+                        >
+                          <path d="M9 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </a>
+                    </li>
+                  ))}
+                </ul>
 
-              <Button
-                as="a"
-                href="#join"
-                variant="primary"
-                onClick={() => setOpen(false)}
-                className="mt-6 w-full relative"
-              >
-                Join Shewins
-              </Button>
-            </div>
-          </div>
-        </>
-      )}
+                <Button
+                  as="a"
+                  href="#join"
+                  variant="primary"
+                  onClick={() => setOpen(false)}
+                  className="mt-6 w-full relative"
+                >
+                  Join Shewins
+                </Button>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

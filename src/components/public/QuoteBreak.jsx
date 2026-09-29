@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import useReveal from '../../hooks/useReveal.js';
-import useParallax from '../../hooks/useParallax.js';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const QUOTES = [
   {
@@ -23,17 +22,10 @@ const QUOTES = [
 
 export default function QuoteBreak() {
   const [index, setIndex] = useState(0);
-  const [isFading, setIsFading] = useState(false);
-  const ref = useReveal({ variant: 'fade-up' });
-  const iconParallax = useParallax({ speed: 0.08, min: -20, max: 20 });
 
   useEffect(() => {
     const id = setInterval(() => {
-      setIsFading(true);
-      setTimeout(() => {
-        setIndex((i) => (i + 1) % QUOTES.length);
-        setIsFading(false);
-      }, 350);
+      setIndex((i) => (i + 1) % QUOTES.length);
     }, 7000);
     return () => clearInterval(id);
   }, []);
@@ -42,8 +34,15 @@ export default function QuoteBreak() {
 
   return (
     <section aria-label="Community voices" className="py-16 sm:py-20 relative overflow-hidden">
-      <div ref={ref} className="reveal-fade-up max-w-3xl mx-auto px-6 sm:px-8 text-center">
-        <div ref={iconParallax} className="transition-transform duration-500 ease-out">
+      {/* Clip/mask unveil moment on scroll entry per §4 */}
+      <motion.div
+        initial={{ clipPath: 'inset(60% 0% 0% 0%)', opacity: 0, y: 16 }}
+        whileInView={{ clipPath: 'inset(0% 0% 0% 0%)', opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: '-40px' }}
+        transition={{ duration: 0.95, ease: [0.16, 1, 0.3, 1] }}
+        className="max-w-3xl mx-auto px-6 sm:px-8 text-center"
+      >
+        <div>
           <svg
             className="mx-auto mb-6 text-rose-300"
             width="34"
@@ -59,20 +58,25 @@ export default function QuoteBreak() {
           </svg>
         </div>
 
-        <div
-          className={`transition-all duration-350 ease-out ${
-            isFading ? 'opacity-0 transform -translate-y-2 blur-[2px]' : 'opacity-100 transform translate-y-0 blur-0'
-          }`}
-        >
-          <p className="font-display text-xl sm:text-2xl md:text-[1.75rem] leading-snug text-ink font-medium">
-            "{quote.text}"
-          </p>
-          <p className="stitch-line w-16 mx-auto my-5" aria-hidden="true" />
-          <p className="text-sm text-rose-600 font-semibold tracking-wide uppercase text-xs">
-            {quote.author}
-          </p>
+        <div className="min-h-[120px] flex flex-col justify-center">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={index}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <blockquote className="font-display text-2xl sm:text-3xl lg:text-[2rem] leading-snug text-ink font-normal italic">
+                &ldquo;{quote.text}&rdquo;
+              </blockquote>
+              <p className="text-xs uppercase tracking-[0.2em] font-semibold text-rose-600 mt-5">
+                — {quote.author}
+              </p>
+            </motion.div>
+          </AnimatePresence>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }
